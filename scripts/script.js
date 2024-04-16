@@ -1,345 +1,237 @@
-// 1. Write a JavaScript program to compare two objects to determine if the first contains equivalent property values to the second one.
+//1. Write a JavaScript program to compare two objects to determine if the first contains equivalent property values to the second one.
+const person1 = {
+    name: 'John',
+    age: 30,
+    city: 'New York'
+};
 
-const checkEq = (obj, source) =>
-  Object.keys(source).every(
-    (key) => obj.hasOwnProperty(key) && obj[key] === source[key]
-  );
-const objA = { a: 1, b: 2, c: 3 };
-const objB = { a: 1, b: 2, c: 3 };
+const person2 = {
+    name: 'Ingy',
+    age: 23
+};
 
-const result = checkEq(objA, objB);
+const matches = (person2, person1) => Object.keys(person1).every(key => person2.hasOwnProperty(key));
 
-if (result) {
-  console.log("Objects are equivalent.");
-} else {
-  console.log("Objects are not equivalent.");
+console.log(matches(person2, person1)); //false
+console.log(matches(person1, person2)); //true
+
+//2. Write a JavaScript program to copy a string to the clipboard.
+const element = document.getElementById('textarea');
+const str= "helloworld"
+element.textContent = str;
+
+//3. Write a JavaScript program to convert a comma-separated value (CSV) string to a 2D array.
+const str = 'The quick brown fox jumps, over the lazy dog.';
+
+const strArray = str.split(',');
+const twoDArray =[];
+
+for(let i = 0 ; i< strArray.length;i++)
+{
+    const word = strArray[i].split(' ');
+    twoDArray.push(word);
 }
+console.log(twoDArray);
 
-// 2. Write a JavaScript program to copy a string to the clipboard.
+//4. Write a JavaScript program to convert a comma-separated value (CSV) string to a 2D array of objects. The first row of the string is used as the title row.
+const str = 'HelloWorld!, Ingy is a girl, Malak is a girl, Sallam is a boy';
 
-function copyToClipboard(text) {
-  navigator.clipboard
-    .writeText(text)
-    .then(() => {
-      console.log("Text has been copied to the clipboard:", text);
-    })
-    .catch((err) => {
-      console.error("Unable to copy text to clipboard:", err);
+const rows= str.split(', ');
+const header = rows[0];
+const objArray =[];
+
+for (let i=1 ; i<rows.length ; i++ ){
+
+    const value = rows[i].split(' is a ')
+    const obj ={};
+
+
+    obj.name=value[0];
+    obj.gender=value[1];
+    
+    objArray.push(obj);
+    
+}
+console.log(header);
+console.log(objArray);
+
+//5. Write a JavaScript program to convert an array of objects to a comma-separated value (CSV) string that contains only the columns specified.
+const arrayToCSV = (dataArray, columns) => {
+    
+        const csvData = dataArray.map(obj => columns.map(col => obj[col]));
+        const csvString = csvData.map(row => row.join(',')).join('\n');
+    
+        return csvString;
+    };
+
+    const columnsToInclude = ['name', 'gender'];
+    const csvString = arrayToCSV(objArray, columnsToInclude);
+
+    console.log(csvString);
+
+//6. Write a JavaScript program to target a given value in a nested JSON object based on the given key.
+function findValue(obj, targetKey) {
+    let result;
+    Object.keys(obj).some(key => {
+        if (key === targetKey) {
+            result = obj[key];
+            return true;
+        }
+        if (typeof obj[key] === 'object') {
+            result = findValue(obj[key], targetKey);
+            return result !== undefined;
+        }
     });
-}
-
-const textToCopy = "Hello world fromm clipboard!";
-
-const copyButton = document.getElementById("copyButton");
-copyButton.addEventListener("click", () => {
-  copyToClipboard(textToCopy);
-});
-
-// 3. Write a JavaScript program to convert a comma-separated value (CSV) string to a 2D array.
-
-function csvTo2DArray(csvString) {
-  const rows = csvString.split("\n");
-  const result = [];
-
-  for (const row of rows) {
-    const columns = row.split(",");
-    const trimmedColumns = columns.map((column) => column.trim());
-    result.push(trimmedColumns);
-  }
-
-  return result;
-}
-
-const csvString = "Apple,Banana,BlackBerry,Watermelon";
-const csvArray = csvTo2DArray(csvString);
-
-console.log(csvArray);
-
-// 4. Write a JavaScript program to convert a comma-separated value (CSV) string to a 2D array of objects. The first row of the string is used as the title row.
-
-function csvTo2DArrayOfObjects(csvString) {
-  const rows = csvString.split("\n");
-  const titles = rows[0].split(",");
-  const result = [];
-
-  for (let i = 1; i < rows.length; i++) {
-    const columns = rows[i].split(",");
-    const obj = {};
-
-    for (let j = 0; j < titles.length; j++) {
-      obj[titles[j].trim()] = columns[j].trim();
-    }
-
-    result.push(obj);
-  }
-
-  return result;
-}
-
-const csvString2 =
-  "ID,First Name,Last Name\n1,John,Doe\n2,Jane,Smith\n3,Bob,Johnson";
-const csvArrayOfObjects = csvTo2DArrayOfObjects(csvString2);
-
-console.log(csvArrayOfObjects);
-
-// 5. Write a JavaScript program to convert an array of objects to a comma-separated value (CSV) string that contains only the columns specified.
-
-function objectsToCSV(objects, columns) {
-  const filteredObjects = objects.map((obj) =>
-    columns.reduce((acc, column) => {
-      if (obj.hasOwnProperty(column)) {
-        acc[column] = obj[column];
-      }
-      return acc;
-    }, {})
-  );
-
-  const csvString = [
-    columns.join(","),
-    ...filteredObjects.map((obj) =>
-      columns.map((column) => obj[column]).join(",")
-    ),
-  ].join("\n");
-
-  return csvString;
-}
-
-const data = [
-  { ID: "1", Name: "John", Age: "25" },
-  { ID: "2", Name: "Jane", Age: "30" },
-  { ID: "3", Name: "Bob", Age: "22" },
-];
-
-const selectedColumns = ["ID", "Name"];
-
-const csvResult = objectsToCSV(data, selectedColumns);
-
-console.log(csvResult);
-
-// 6. Write a JavaScript program to target a given value in a nested JSON object based on the given key.
-
-function getValueByKey(obj, targetKey) {
-  let result = null;
-
-  const searchObject = (currentObj) => {
-    for (const key in currentObj) {
-      if (key === targetKey) {
-        result = currentObj[key];
-        break;
-      } else if (typeof currentObj[key] === "object") {
-        searchObject(currentObj[key]);
-      }
-    }
-  };
-
-  searchObject(obj);
-  return result;
+    return result;
 }
 
 const nestedObject = {
-  id: 1,
-  name: "John",
-  details: {
-    age: 25,
-    address: {
-      city: "New York",
-      phone: "10001",
-    },
-  },
+    a: {
+        b: {
+            c: 123,
+            d: {
+                e: 456
+            }
+        }
+    }
 };
+console.log(findValue(nestedObject, 'c')); // Output: 123
 
-const targetKey = "phone";
-const targetValue = getValueByKey(nestedObject, targetKey);
-
-console.log(`The value for key '${targetKey}' is:`, targetValue);
-
-// 7. Write a JavaScript program to convert a specified number into an array of digits.
-
+//7. Write a JavaScript program to convert a specified number into an array of digits.
 function numberToArray(number) {
-  return [...String(number)].map((digit) => parseInt(digit));
+    return String(number).split('').map(Number);
 }
 
-const exampleNumber = 12345;
-const digitArray = numberToArray(exampleNumber);
+const number = 12345;
+console.log(numberToArray(number)); // Output: [1, 2, 3, 4, 5]
 
-console.log(`Number: ${exampleNumber}`);
-console.log(`Array of Digits:`, digitArray);
-
-// 8. Write a JavaScript program to filter out the specified values from a specified array. Return the original array without filtered values.
-
-function filterOutValues(originalArray, valuesToFilter) {
-  return originalArray.filter((item) => !valuesToFilter.includes(item));
+//8. Write a JavaScript program to filter out the specified values from a specified array. Return the original array without filtered values.
+function filterValues(array, filterValues) {
+    return array.filter(item => !filterValues.includes(item));
 }
 
-const arrayToFilter = [1, 2, 3, 4, 5];
-const valuesToFilterOut = [2, 4];
+const array = [1, 2, 3, 4, 5];
+const filterValues = [2, 4];
+console.log(filterValues(array, filterValues)); // Output: [1, 3, 5]
 
-const filteredArray = filterOutValues(arrayToFilter, valuesToFilterOut);
-
-console.log("Original Array:", arrayToFilter);
-console.log("Values to Filter Out:", valuesToFilterOut);
-console.log("Filtered Array:", filteredArray);
-
-// 9. Write a JavaScript program to combine the numbers of a given array into an array containing all combinations.
-
-function getAllCombinations(arr) {
-  const result = [];
-
-  function generateCombinations(current, remaining) {
-    if (remaining.length === 0) {
-      result.push(current);
-      return;
+//9. Write a JavaScript program to combine the numbers of a given array into an array containing all combinations.
+function combineNumbers(array) {
+    const result = [];
+    for (let i = 0; i < array.length; i++) {
+        for (let j = i + 1; j < array.length; j++) {
+            result.push([array[i], array[j]]);
+        }
     }
-
-    for (let i = 0; i < remaining.length; i++) {
-      const next = current.concat(remaining[i]);
-      const remainingCopy = remaining
-        .slice(0, i)
-        .concat(remaining.slice(i + 1));
-      generateCombinations(next, remainingCopy);
-    }
-  }
-
-  generateCombinations([], arr);
-  return result;
+    return result;
 }
 
-// Example usage
-const inputArray = [1, 2, 3];
-const combinations = getAllCombinations(inputArray);
+const array = [1, 2, 3];
+console.log(combineNumbers(array)); // Output: [[1, 2], [1, 3], [2, 3]]
 
-console.log("Original Array:", inputArray);
-console.log("All Combinations:", combinations);
-
-// 10. Write a JavaScript program to extract values at specified indexes from a specified array.
-
-function extractValues(arr, indexes) {
-  return indexes.map((index) => arr[index]);
+//10. Write a JavaScript program to extract values at specified indexes from a specified array.
+function extractValues(array, indexes) {
+    return indexes.map(index => array[index]);
 }
 
-const arrayToExtractFrom = ["a", "b", "c", "d", "e"];
-const specifiedIndexes = [1, 3, 4];
-const extractedValues = extractValues(arrayToExtractFrom, specifiedIndexes);
-console.log(extractedValues);
+const array = ['a', 'b', 'c', 'd', 'e'];
+const indexes = [1, 3];
+console.log(extractValues(array, indexes)); // Output: ['b', 'd']
 
-// 11. Write a JavaScript program to generate a random hexadecimal color code.
-
-function generateRandomHexColor() {
-  const letters = "0123456789ABCDEF";
-  let color = "#";
-  for (let i = 0; i < 6; i++) {
-    color += letters[Math.floor(Math.random() * 16)];
-  }
-  return color;
+//11. Write a JavaScript program to generate a random hexadecimal color code.
+function generateRandomColor() {
+    return '#' + Math.floor(Math.random() * 16777215).toString(16);
 }
 
-const randomColor = generateRandomHexColor();
-console.log(randomColor);
+console.log(generateRandomColor()); // Output: e.g., '#3a7b91'
 
-// 12. Write a JavaScript program to remove non-printable ASCII characters from a given string.
-
-function removeNonPrintableChars(str) {
-  return str.replace(/[^ -~]+/g, "");
+//12. Write a JavaScript program to remove non-printable ASCII characters from a given string.
+function removeNonPintable(str){
+return str.replace(/[^ -~]+/g,'');
+}
+const str = "hello\nworld";
+console.log(removeNonPintable(str));
+//13. Write a JavaScript program to convert a given string's length to bytes.
+function strToByte(str){
+    return new Blob([str]).size;
+}
+const str = "Hello";
+console.log(strToByte(str));
+//14. Write a JavaScript program to replace multiple object keys' names with the values provided.
+function replaceKeys(obj, keyMap){
+    const newObj = {};
+    Object.keys(obj).forEach(key => {
+        newObj[keyMap[key] || key] = obj[key];
+    });
+    return newObj;
 }
 
-const stringWithNonPrintableChars = "Hello\u001B[31m World!";
-const cleanedString = removeNonPrintableChars(stringWithNonPrintableChars);
-console.log(cleanedString);
-
-// 13. Write a JavaScript program to convert a given string's length to bytes.
-
-function stringLengthToBytes(str) {
-  return new Blob([str]).size;
+const obj = { name: 'John', age: 30 };
+const keyMap = { name: 'firstName' };
+console.log(replaceKeys(obj, keyMap));
+//15. Write a JavaScript program to return the minimum-maximum value of an array, after applying the provided function to set a comparing rule.
+function minMaxValue(array) {
+    const rule = x => x * 2;
+    const mappedValues = array.map(rule);
+    return [Math.min(...mappedValues), Math.max(...mappedValues)];
 }
 
-const inputString = "Hello, World!";
-const bytes = stringLengthToBytes(inputString);
-console.log(bytes + " bytes");
-
-// 14. Write a JavaScript program to replace multiple object keys' names with the values provided.
-
-function replaceKeysWithValues(obj, keyReplacements) {
-  const newObj = {};
-  for (const key in obj) {
-    newObj[keyReplacements[key] || key] = obj[key];
-  }
-  return newObj;
+const array = [1, 2, 3, 4, 5];
+console.log(minMaxValue(array));
+//16. Write a JavaScript function that returns true if the provided predicate function returns true for all elements in a collection, false otherwise.
+function valueOfCollection(collection , predicate){
+    return collection.every(predicate);
+}
+const number = [2,3,4,5,7];
+const predicate = x=>x>1;
+console.log(valueOfCollection(number,predicate));
+//17. Write a JavaScript program to split the values of two given arrays into two groups. If an element in the filter is true, the corresponding element in the collection belongs to the first group; otherwise, it belongs to the second group.
+function filterArrays(array1, array2, fn) {
+    const result = [[], []];
+    array1.forEach(element => {
+        if (fn(element)) {
+            result[0].push(element);
+        } else {
+            result[1].push(element);
+        }
+    });
+    array2.forEach(element => {
+        if (fn(element)) {
+            result[0].push(element);
+        } else {
+            result[1].push(element);
+        }
+    });
+    return result;
 }
 
-const originalObject = { a: 1, b: 2, c: 3 };
-const keyReplacements = { a: "x", b: "y" };
-const modifiedObject = replaceKeysWithValues(originalObject, keyReplacements);
-console.log(modifiedObject);
+const array1 = [1, -2, 3, 4, -7];
+const array2 = [5, -6, 7, -8, -9];
+const fn = x => x < 0;
+console.log(filterArrays(array1, array2, fn));
 
-// 15. Write a JavaScript program to return the minimum-maximum value of an array, after applying the provided function to set a comparing rule.
-
-function minMaxWithComparator(arr, comparator) {
-  return [Math.min(...arr.map(comparator)), Math.max(...arr.map(comparator))];
+//18. Write a JavaScript program to remove specified elements from the left of a given array of elements.
+function removeFromArray(array,numToRemove){
+    return array.slice(count);
+}
+const array =[1,2,3,4,5,6,7];
+const num =4;
+console.log(removeFromArray(array,num));
+//19. Write a JavaScript program to remove specified elements from the right of a given array of elements.
+function removeFromArray(array,numToRemove){
+    return array.slice(0,-count);
+}
+const array =[1,2,3,4,5,6,7];
+const num =4;
+console.log(removeFromArray(array,num));
+//20. Write a JavaScript program to extend a 3-digit color code to a 6-digit color code.
+function sixDigitColor(color) {
+    return color.replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => {
+        return '#' + r + r + g + g + b + b;
+    });
 }
 
-const numbers = [1, 2, 3, 4, 5];
-const comparatorFunction = (num) => num * num; // Compare based on square of each number
-const result2 = minMaxWithComparator(numbers, comparatorFunction);
-console.log(result2);
-
-// 16. Write a JavaScript function that returns true if the provided predicate function returns true for all elements in a collection, false otherwise.
-
-function allElementsSatisfyPredicate(collection, predicate) {
-  return collection.every(predicate);
-}
-
-const numbers2 = [2, 4, 6, 8, 10];
-const isEven = (num) => num % 2 === 0;
-const result3 = allElementsSatisfyPredicate(numbers2, isEven);
-console.log(result3);
-
-// 17. Write a JavaScript program to split the values of two given arrays into two groups. If an element in the filter is true, the corresponding element in the collection belongs to the first group; otherwise, it belongs to the second group.
-
-function splitArraysByFilter(arr1, arr2, filter) {
-  const group1 = [];
-  const group2 = [];
-  arr1.forEach((val, index) => (filter[index] ? group1 : group2).push(val));
-  arr2.forEach((val, index) => (filter[index] ? group1 : group2).push(val));
-  return [group1, group2];
-}
-
-const array1 = [1, 2, 3, 4, 5];
-const array2 = ["a", "b", "c", "d", "e"];
-const filterArray = [true, false, true, false, true];
-const resultGroups = splitArraysByFilter(array1, array2, filterArray);
-console.log(resultGroups);
-
-// 18. Write a JavaScript program to remove specified elements from the left of a given array of elements.
-
-function removeElementsFromLeft(arr, count) {
-  return arr.slice(count);
-}
-
-const originalArray = [1, 2, 3, 4, 5];
-const removedLeft = removeElementsFromLeft(originalArray, 2);
-console.log(removedLeft);
-
-// 19. Write a JavaScript program to remove specified elements from the right of a given array of elements.
-
-function removeElementsFromRight(arr, count) {
-  return arr.slice(0, -count);
-}
-
-const originalArray2 = [1, 2, 3, 4, 5];
-const removedRight = removeElementsFromRight(originalArray2, 2);
-console.log(removedRight);
-
-// 20. Write a JavaScript program to extend a 3-digit color code to a 6-digit color code.
-
-function extendColorCode(color) {
-  if (color.length === 4) {
-    return color
-      .split("")
-      .map((char, index) => (index === 0 ? char : char.repeat(2)))
-      .join("");
-  }
-  return color;
-}
+const color = '#0f5';
+console.log(sixDigitColor(color));
 
 const shortColorCode = "#0F8";
 const extendedColorCode = extendColorCode(shortColorCode);
